@@ -1,4 +1,9 @@
 # Install and configure Claude Code
 
 curl -fsSL https://claude.ai/install.sh | bash
-cp -r ~/dotfiles/claude $(OLDPWD)/.claude
+
+if [ -z "$WORKSPACE_ROOT" ]; then
+  WORKSPACE_ROOT=~
+fi
+
+cp -r ~/dotfiles/claude ${WORKSPACE_ROOT}/.claude
