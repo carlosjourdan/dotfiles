@@ -2,8 +2,8 @@
 
 curl -fsSL https://claude.ai/install.sh | bash
 
-if [ -z "$WORKSPACE_ROOT" ]; then
-  WORKSPACE_ROOT=~
+if [ -z "$WORKSPACE_FOLDER" ]; then
+  WORKSPACE_FOLDER=~
 fi
 
-cp -r ~/dotfiles/claude ${WORKSPACE_ROOT}/.claude
+cp -r ~/dotfiles/claude ${WORKSPACE_FOLDER}/.claude
