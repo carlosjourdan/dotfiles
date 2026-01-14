@@ -2,4 +2,4 @@
 
 curl -fsSL https://claude.ai/install.sh | bash
 
-cp -r ~/dotfiles/claude ~/.claude
+cp -r ~/dotfiles/claude/* ~/.claude/
