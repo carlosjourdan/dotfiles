@@ -74,11 +74,32 @@ Push the branch to the remote repository:
 git push -u origin <branch-name>
 ```
 
-### 7. Create Azure DevOps PR
+### 7. Check for Existing PR
 
-Ask the user to choose the PR title from two suggestion, or give his input.
+Check if a PR already exists for this branch:
 
-Then, create the PR using Azure CLI:
+```bash
+az repos pr list \
+  --source-branch <source-branch> \
+  --target-branch main \
+  --status active \
+  --output json
+```
+
+If a PR already exists, **skip to step 7b** (update the existing PR).
+Otherwise, proceed to step 7a (create a new PR).
+
+### 7a. Create Azure DevOps PR (no existing PR)
+
+Ask the user to choose the PR title from two suggestions, or give their input.
+
+Generate the PR description from the commit history on this branch (vs main):
+
+```bash
+git log main..<source-branch> --pretty=format:"- %s%n%n%b" --reverse
+```
+
+Create the PR using Azure CLI:
 
 ```bash
 az repos pr create \
@@ -89,7 +110,26 @@ az repos pr create \
   --output json
 ```
 
-Capture the PR ID from the response.
+Capture the PR ID from the response, then continue to step 8.
+
+### 7b. Update Existing PR Description
+
+Generate an updated description from the current commit history on this branch (vs main):
+
+```bash
+git log main..<source-branch> --pretty=format:"- %s%n%n%b" --reverse
+```
+
+Update the PR description:
+
+```bash
+az repos pr update \
+  --id <pr-id> \
+  --description "<updated PR description>" \
+  --output json
+```
+
+Then **skip to step 10** (return PR URL).
 
 ### 8. Self-Approve the PR
 
@@ -123,7 +163,7 @@ https://dev.azure.com/{organization}/{project}/_git/{repo}/pullrequest/{pr-id}
 
 ## Output Format
 
-At the end, provide a clear summary:
+**For new PRs:**
 
 ```
 PR Created Successfully!
@@ -132,6 +172,18 @@ Title: <title>
 PR #: <pr-id>
 Source: <source-branch> -> Target: main
 Status: Auto-complete enabled (squash merge, delete source branch)
+
+PR URL: <web-url>
+```
+
+**For updated PRs:**
+
+```
+PR Updated!
+
+PR #: <pr-id>
+Source: <source-branch> -> Target: main
+Description updated to match current commit history.
 
 PR URL: <web-url>
 ```
